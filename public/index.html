@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>CRUD App</title>
+</head>
+<body>
+
+<h1>Task Manager</h1>
+
+<input type="text" id="taskInput">
+<button onclick="addTask()">Dodaj</button>
+
+<ul id="taskList"></ul>
+
+<script>
+    async function loadTasks() {
+        const response = await fetch('/tasks');
+        const tasks = await response.json();
+
+        const list = document.getElementById('taskList');
+        list.innerHTML = '';
+
+        tasks.forEach((task, index) => {
+            const li = document.createElement('li');
+            li.innerHTML = `
+            ${task.title}
+            <button onclick="editTask(${index})">Edytuj</button>
+            <button onclick="deleteTask(${index})">Usuń</button>
+        `;
+            list.appendChild(li);
+        });
+    }
+
+    async function addTask() {
+        const input = document.getElementById('taskInput');
+
+        await fetch('/tasks', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                title: input.value
+            })
+        });
+
+        input.value = '';
+        loadTasks();
+    }
+
+    async function deleteTask(id) {
+        await fetch('/tasks/' + id, {
+            method: 'DELETE'
+        });
+
+        loadTasks();
+    }
+
+    loadTasks();
+
+    async function editTask(id) {
+        const newTitle = prompt('Nowa nazwa taska');
+
+        await fetch('/tasks/' + id, {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                title: newTitle
+            })
+        });
+
+        loadTasks();
+    }
+</script>
+
+</body>
+</html>
