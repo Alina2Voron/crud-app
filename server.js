@@ -1,5 +1,6 @@
 const express = require('express');
 const path = require('path');
+const PORT = process.env.PORT || 8080;
 
 const app = express();
 
@@ -27,6 +28,6 @@ app.delete('/tasks/:id', (req, res) => {
     res.send('Usunięto');
 });
 
-app.listen(3000, () => {
-    console.log('Działa');
+app.listen(PORT, '0.0.0.0', () => {
+    console.log(`Serwer wystartował na porcie ${PORT}`);
 });
